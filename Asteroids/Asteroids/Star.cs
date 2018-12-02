@@ -6,7 +6,7 @@ namespace Asteroids
 {
     class Star : BaseObject
     {
-        public Star(Point pos, Point dir, Size size, string path) : base(pos, dir, size, path)
+        public Star(Point pos, Point dir, string path) : base(pos, dir, path)
         {
             //"../../starr.png"
         }
@@ -21,5 +21,6 @@ namespace Asteroids
             Pos.X = Pos.X - Dir.X;
             if (Pos.X < 0) Pos.X = Game.Width + Size.Width;
         }
+
     }
 }

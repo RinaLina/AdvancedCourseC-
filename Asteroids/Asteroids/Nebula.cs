@@ -5,7 +5,7 @@ namespace Asteroids
 {
     class Nebula : BaseObject
     {
-        public Nebula(Point pos, Point dir, Size size, string path) : base(pos, dir, size, path)
+        public Nebula(Point pos, Point dir, string path) : base(pos, dir, path)
         {
             //"../../nebula.png"
         }

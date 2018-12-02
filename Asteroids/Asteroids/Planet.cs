@@ -5,7 +5,7 @@ namespace Asteroids
 {
     class Planet : BaseObject
     {
-        public Planet(Point pos, Point dir, Size size, string path) : base(pos, dir, size, path)
+        public Planet(Point pos, Point dir, string path) : base(pos, dir, path)
         {
             //"../../planet.png"
         }

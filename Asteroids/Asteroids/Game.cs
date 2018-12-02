@@ -22,7 +22,13 @@ namespace Asteroids
             _context = BufferedGraphicsManager.Current;
             Width = form.ClientSize.Width;
             Height = form.ClientSize.Height;
+            if (Width <= 0 || Width > 1000 || Height <= 0 || Height > 1000)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+
             newImage = Image.FromFile("../../space.jpg");
+            form.BackgroundImage = newImage;
             Buffer = _context.Allocate(g, new Rectangle(0, 0, Width, Height));
             Load();
             Timer timer = new Timer { Interval = 100 };
@@ -41,17 +47,33 @@ namespace Asteroids
             //Buffer.Graphics.FillEllipse(Brushes.Wheat, new Rectangle(100, 100, 200, 200));
             //Buffer.Render();
 
-            Buffer.Graphics.Clear(Color.Blue);
-            Buffer.Graphics.DrawImage(newImage, 0, 0);
+            Buffer.Graphics.Clear(Color.Black);
+            Buffer.Graphics.DrawImage(newImage, new Rectangle(0, 0, Width, Height));
             foreach (BaseObject obj in _objs) obj.Draw();
+            foreach (Asteroid obj in _asteroids) obj.Draw();
+            _bullet.Draw();
 
             Buffer.Render();
         }
         public static void Update()
         {
             foreach(BaseObject obj in _objs) obj.Update();
+            foreach (Asteroid a in _asteroids)
+            {
+                a.Update();
+                if (a.Collision(_bullet))
+                {
+                    System.Media.SystemSounds.Hand.Play();
+                    a.Replace();
+                    _bullet.Replace();
+                }
+            }
+            _bullet.Update();
         }
         public static BaseObject[] _objs;
+        private static Bullet _bullet;
+        private static Asteroid[] _asteroids;
+
         public static void Load()
         {
             int n = 1; // количество туманностей
@@ -59,24 +81,33 @@ namespace Asteroids
             int s = 10; // количество звезд
             int a = 10; //количество астероидов
 
-            _objs = new BaseObject[n + p + s + a];
+            var rnd = new Random();
+
+            _objs = new BaseObject[n + p + s];
            
             for (int i = 0; i < n; i++)
             {
-                _objs[i] = new Nebula(new Point(200 - 300 * (int)Math.Pow(-1, i), 200 - 100*(int)Math.Pow(-1, i)), new Point(0, 0), new Size(30, 30), "../../nebula.png");
+                _objs[i] = new Nebula(new Point(200, Game.Height-560), new Point(0, 0),  "../../nebula.png");
             }
             for (int i = n; i < n + p; i++)
             {
-                _objs[i] = new Planet(new Point(200 + 300 * (int)Math.Pow(-1, i), 200 + 300 * (int)Math.Pow(-1, i)), new Point(0, 2), new Size(30, 30), "../../planet.png");
+                int r = rnd.Next(5, 50);
+                _objs[i] = new Planet(new Point(rnd.Next(0, Game.Width), rnd.Next(0, Game.Height)), 
+                    new Point(-r, r), "../../planet.png");
             }
             for (int i = n + p; i < n + p + s; i++)
             {
-                _objs[i] = new Star(new Point(600, (i - n + p) * 40), new Point(i, 0), new Size(5, 5), "../../starr.png");
+                _objs[i] = new Star(new Point(600, (i - n + p) * 40), new Point(i, 0), 
+                    "../../starr.png");
             }
-            for (int i = n + p + s; i < n + p + s + a; i++)
+            _asteroids = new Asteroid[a];
+            for (int i = 0; i < a; i++)
             {
-                _objs[i] = new Asteroid(new Point(400, 300), new Point((int)Math.Pow(-1, i) * (i + 3) * 3, (int)Math.Pow(-1, i) * (i + 7) * 3), new Size(10, 10), "../../asteroid.png");
+                int r = rnd.Next(5, 50);
+                _asteroids[i] = new Asteroid(new Point(rnd.Next(0, Game.Width), rnd.Next(0, Game.Height)), 
+                    new Point(-r / 5, r), "../../asteroid.png");
             }
+            _bullet = new Bullet(new Point(0, 200), new Point(5, 0), "../../bullet.png", new Size(4, 1));
         }
     }
 }
