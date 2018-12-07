@@ -52,6 +52,7 @@
     <Compile Include="Game.cs" />
     <Compile Include="GameObjectException.cs" />
     <Compile Include="ICollision.cs" />
+    <Compile Include="Kit.cs" />
     <Compile Include="Nebula.cs" />
     <Compile Include="Planet.cs" />
     <Compile Include="Program.cs" />

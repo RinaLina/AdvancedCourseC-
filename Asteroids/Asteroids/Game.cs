@@ -16,6 +16,7 @@ namespace Asteroids
         public static string StarPicPath = "../../starr.png";
         public static string NebulaPicPath = "../../nebula.png";
         public static string shipImPath = "../../ss.png";
+        public static string kitImPath = "../../hp.png";
         private static Timer _timer = new Timer { Interval = 100 };
         public static Random Rnd = new Random();
         //при создание корабля таким способом выетала ошибка : TypeInitializationException
@@ -62,6 +63,10 @@ namespace Asteroids
             {
                 a?.Draw();
             }
+            foreach (Kit a in _kit)
+            {
+                a?.Draw();
+            }
             _bullet?.Draw();
             _ship?.Draw();
             if (_ship != null)
@@ -90,11 +95,21 @@ namespace Asteroids
                 System.Media.SystemSounds.Asterisk.Play();
                 if (_ship.Energy <= 0) _ship?.Die();
             }
+            for (var i = 0; i < _kit.Length; i++)
+            {
+                if (_kit[i] == null) continue;
+                _kit[i].Update();
+                if (!_ship.Collision(_kit[i])) continue;
+                var rnd = new Random();
+                _ship?.EnergyLow(-rnd.Next(1, 10));
+                System.Media.SystemSounds.Asterisk.Play();
+            }
 
         }
         public static BaseObject[] _objs;
         private static Bullet _bullet;
         private static Asteroid[] _asteroids;
+        private static Kit[] _kit;
 
         public static void Load()
         {
@@ -102,6 +117,7 @@ namespace Asteroids
             int p = 2; // количество планет
             int s = 10; // количество звезд
             int a = 10; //количество астероидов
+            int h = 4; // количество аптечек
 
             var rnd = new Random();
 
@@ -127,7 +143,14 @@ namespace Asteroids
             {
                 int r = rnd.Next(5, 50);
                 _asteroids[i] = new Asteroid(new Point(rnd.Next(0, Game.Width), rnd.Next(0, Game.Height)), 
-                    new Point(-r / 20, r/5), AsterPicPath);
+                    new Point(-r / 20, r/5), AsterPicPath, new Size(50, 50));
+            }
+            _kit = new Kit[h];
+            for (int i = 0; i < h; i++)
+            {
+                int r = rnd.Next(5, 50);
+                _kit[i] = new Kit(new Point(rnd.Next(0, Game.Width), rnd.Next(0, Game.Height)),
+                    new Point(-r / 5, r), kitImPath, new Size(50, 50));
             }
             _bullet = new Bullet(new Point(0, 200), new Point(5, 0), BulletPicPath, new Size(4, 1));
         }

@@ -3,16 +3,15 @@ using System.Drawing;
 
 namespace Asteroids
 {
-    class Asteroid : BaseObject
+    class Kit : BaseObject
     {
         public int Power { get; set; }
-        public Asteroid(Point pos, Point dir, string path, Size size) : base(pos, dir, path)
+        public Kit(Point pos, Point dir, string path, Size size) : base(pos, dir, path)
         {
-            Power = 1;
+            Power = 10;
             Size = size;
-            //"../../asteroid.png"
+            //"../../hp.png"
         }
-
         public override void Draw()
         {
             Rectangle destRect = new Rectangle(Pos.X, Pos.Y, Size.Width, Size.Height);
@@ -35,12 +34,6 @@ namespace Asteroids
                 Pos.Y = Game.Height;
                 Dir.Y = -Dir.Y;
             }
-        }
-
-        public override void Replace()
-        {
-            Pos.Y = Game.Height;
-            Pos.X = Game.Width;
         }
     }
 }
