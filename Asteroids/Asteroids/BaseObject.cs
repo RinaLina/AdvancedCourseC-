@@ -7,7 +7,7 @@ namespace Asteroids
     {
         protected Point Pos;
         protected Point Dir;
-        protected Size Size;
+        public Size Size;
         protected Image newImage;
         public BaseObject(Point pos, Point dir, string path)
         {
@@ -36,5 +36,6 @@ namespace Asteroids
         public bool Collision(ICollision o) => o.Rect.IntersectsWith(this.Rect);
         public Rectangle Rect => new Rectangle(Pos, Size);
         virtual public void Replace() { }
+        public delegate void Message();
     }
 }
