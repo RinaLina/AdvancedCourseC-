@@ -5,14 +5,20 @@ namespace Asteroids
 {
     class Asteroid : BaseObject
     {
+        static public event Action<string> CreateAsteroid;
+        static public event Action<string> DieAsteroid;
         public int Power { get; set; }
         public Asteroid(Point pos, Point dir, string path, Size size) : base(pos, dir, path)
         {
             Power = 1;
+            Asteroid.CreateAsteroid?.Invoke($"{DateTime.Now}: астероид создан");
             Size = size;
             //"../../asteroid.png"
         }
-
+        ~Asteroid()
+        {
+            Asteroid.DieAsteroid?.Invoke($"{DateTime.Now}: астероид погиб");
+        }
         public override void Draw()
         {
             Rectangle destRect = new Rectangle(Pos.X, Pos.Y, Size.Width, Size.Height);

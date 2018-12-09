@@ -43,6 +43,11 @@ namespace Asteroids
             form.KeyDown += Form_KeyDown;
             Buffer = _context.Allocate(g, new Rectangle(0, 0, Width, Height));
             _ship = new Ship(new Point(10, 400), new Point(50, 50), shipImPath, new Size(50, 50));
+            Ship.CreateShip += delegate (string s){Console.WriteLine(s);};
+            Ship.CreateShip += s =>
+            {
+                using (var sw = new System.IO.StreamWriter("log.txt", true)) { sw.WriteLine(s); };
+            };
             Load();
             //Timer timer = new Timer { Interval = 100 };
             _timer.Start();
@@ -70,7 +75,11 @@ namespace Asteroids
             _bullet?.Draw();
             _ship?.Draw();
             if (_ship != null)
+            {
                 Buffer.Graphics.DrawString("Energy:" + _ship.Energy, SystemFonts.DefaultFont, Brushes.White, 0, 0);
+                Buffer.Graphics.DrawString("Exp:" + _ship._exp, SystemFonts.DefaultFont, Brushes.White, 100, 0);
+
+            }
 
             Buffer.Render();
         }
@@ -85,15 +94,43 @@ namespace Asteroids
                 if (_bullet != null && _bullet.Collision(_asteroids[i]))
                 {
                     System.Media.SystemSounds.Hand.Play();
+                    _ship._exp += _asteroids[i].Power;
                     _asteroids[i] = null;
                     _bullet = null;
+                    Asteroid.DieAsteroid += delegate (string s)
+                    {
+                        Console.WriteLine(s);
+                    };
+                    Asteroid.DieAsteroid += s =>
+                    {
+                        using (var sw = new System.IO.StreamWriter("log.txt", true)) { sw.WriteLine(s); }
+                    };
                     continue;
                 }
                 if (!_ship.Collision(_asteroids[i])) continue;
                 var rnd = new Random();
                 _ship?.EnergyLow(rnd.Next(1, 10));
+                Ship.ChangeEnergy += delegate (string s)
+                {
+                    Console.WriteLine(s);
+                };
+                Ship.ChangeEnergy += s =>
+                {
+                    using (var sw = new System.IO.StreamWriter("log.txt", true)) { sw.WriteLine(s); };
+                };
                 System.Media.SystemSounds.Asterisk.Play();
-                if (_ship.Energy <= 0) _ship?.Die();
+                if (_ship.Energy <= 0)
+                {
+                    _ship?.Die();
+                    Ship.DieShip += delegate (string s)
+                    {
+                        Console.WriteLine(s);
+                    };
+                    Ship.DieShip += s =>
+                    {
+                        using (var sw = new System.IO.StreamWriter("log.txt", true)) { sw.WriteLine(s); };
+                    };
+                }
             }
             for (var i = 0; i < _kit.Length; i++)
             {
@@ -102,7 +139,15 @@ namespace Asteroids
                 if (!_ship.Collision(_kit[i])) continue;
                 var rnd = new Random();
                 _ship?.EnergyLow(-rnd.Next(1, 10));
-                System.Media.SystemSounds.Asterisk.Play();
+                Ship.ChangeEnergy += delegate (string s)
+                {
+                    Console.WriteLine(s);
+                };
+                Ship.ChangeEnergy += s =>
+                {
+                    using (var sw = new System.IO.StreamWriter("log.txt", true)) { sw.WriteLine(s); };
+                };
+                System.Media.SystemSounds.Asterisk.Play(); 
             }
 
         }
@@ -144,6 +189,15 @@ namespace Asteroids
                 int r = rnd.Next(5, 50);
                 _asteroids[i] = new Asteroid(new Point(rnd.Next(0, Game.Width), rnd.Next(0, Game.Height)), 
                     new Point(-r / 20, r/5), AsterPicPath, new Size(50, 50));
+                Asteroid.CreateAsteroid += delegate (string d)
+                {
+                    Console.WriteLine(d);
+                };
+
+                Asteroid.CreateAsteroid += d =>
+                {
+                    using (var sw = new System.IO.StreamWriter("log.txt", true)) { sw.WriteLine(d); }
+                };
             }
             _kit = new Kit[h];
             for (int i = 0; i < h; i++)

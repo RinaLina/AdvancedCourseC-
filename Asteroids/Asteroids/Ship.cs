@@ -4,16 +4,22 @@ namespace Asteroids
 {
     class Ship : BaseObject
     {
+        static public event Action<string> CreateShip;
+        static public event Action<string> DieShip;
+        static public event Action<string> ChangeEnergy;
         private int _energy = 100;
+        public int _exp = 0;
         public int Energy => _energy;
         public void EnergyLow(int n)
         {
             _energy -= n;
+            Ship.ChangeEnergy?.Invoke($"{DateTime.Now}: Кораблик: энергия {-n}");
         }
         public Ship(Point pos, Point dir, string path, Size size) : base(pos, dir, path)
         {
             //"../../spaceship.png"
             Size = size;
+            Ship.CreateShip?.Invoke($"{DateTime.Now}: Кораблик создан");
         }
         public override void Draw()
         {
@@ -22,11 +28,9 @@ namespace Asteroids
         }
         public override void Update()
         {
-            if (Pos.X < 0) Pos.X = 0;
-            if (Pos.X > Game.Width) Pos.X = Game.Width;
             if (Pos.Y < 0)
             {
-                Pos.Y = 0;
+                Pos.Y = Size.Height;
             }
             if (Pos.Y > Game.Height)
             {
@@ -44,6 +48,8 @@ namespace Asteroids
         public void Die()
         {
             MessageDie?.Invoke();
+            Ship.DieShip?.Invoke($"{DateTime.Now}: Кораблик погиб");
+
         }
         public static event Message MessageDie;
 
