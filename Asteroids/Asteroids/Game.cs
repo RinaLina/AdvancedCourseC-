@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Collections;
+using System.Collections.Generic;
 
 
 namespace Asteroids
@@ -19,6 +21,7 @@ namespace Asteroids
         public static string kitImPath = "../../hp.png";
         private static Timer _timer = new Timer { Interval = 100 };
         public static Random Rnd = new Random();
+        private static int Level = 3; //количество астероидов
         //при создание корабля таким способом выетала ошибка : TypeInitializationException
         //private static Ship _ship = new Ship(new Point(10, 400), new Point(5, 5), "../../spaseship.png", new Size(10, 10));
         public static Ship _ship
@@ -72,7 +75,10 @@ namespace Asteroids
             {
                 a?.Draw();
             }
-            _bullet?.Draw();
+            foreach (Bullet a in _bullet)
+            {
+                a?.Draw();
+            }
             _ship?.Draw();
             if (_ship != null)
             {
@@ -86,52 +92,70 @@ namespace Asteroids
         public static void Update()
         {
             foreach(BaseObject obj in _objs) obj.Update();
-            _bullet?.Update();
-            for (var i = 0; i < _asteroids.Length; i++)
+            //_bullet?.Update();
+            for (int i = 0; i < _asteroids.Count; i++)
             {
-                if (_asteroids[i] == null) continue;
-                _asteroids[i].Update();
-                if (_bullet != null && _bullet.Collision(_asteroids[i]))
+                if (_ship.Collision(_asteroids[i]))
                 {
-                    System.Media.SystemSounds.Hand.Play();
-                    _ship._exp += _asteroids[i].Power;
-                    _asteroids[i] = null;
-                    _bullet = null;
-                    Asteroid.DieAsteroid += delegate (string s)
+                    var rnd = new Random();
+                    _ship?.EnergyLow(rnd.Next(1, 10));
+                    Ship.ChangeEnergy += delegate (string s)
                     {
                         Console.WriteLine(s);
                     };
-                    Asteroid.DieAsteroid += s =>
-                    {
-                        using (var sw = new System.IO.StreamWriter("log.txt", true)) { sw.WriteLine(s); }
-                    };
-                    continue;
-                }
-                if (!_ship.Collision(_asteroids[i])) continue;
-                var rnd = new Random();
-                _ship?.EnergyLow(rnd.Next(1, 10));
-                Ship.ChangeEnergy += delegate (string s)
-                {
-                    Console.WriteLine(s);
-                };
-                Ship.ChangeEnergy += s =>
-                {
-                    using (var sw = new System.IO.StreamWriter("log.txt", true)) { sw.WriteLine(s); };
-                };
-                System.Media.SystemSounds.Asterisk.Play();
-                if (_ship.Energy <= 0)
-                {
-                    _ship?.Die();
-                    Ship.DieShip += delegate (string s)
-                    {
-                        Console.WriteLine(s);
-                    };
-                    Ship.DieShip += s =>
+                    Ship.ChangeEnergy += s =>
                     {
                         using (var sw = new System.IO.StreamWriter("log.txt", true)) { sw.WriteLine(s); };
                     };
+                    System.Media.SystemSounds.Asterisk.Play();
+                    if (_ship.Energy <= 0)
+                    {
+                        _ship?.Die();
+                        Ship.DieShip += delegate (string s)
+                        {
+                            Console.WriteLine(s);
+                        };
+                        Ship.DieShip += s =>
+                        {
+                            using (var sw = new System.IO.StreamWriter("log.txt", true)) { sw.WriteLine(s); };
+                        };
+                    }
                 }
+                //if (_asteroids[i] == null) continue;
+                _asteroids[i].Update();
+                for(int j = 0; j< _bullet.Count; j++)
+                {
+                    if (_asteroids.Count == 0) break;
+                    if (i >= _asteroids.Count)
+                    {
+                        i = _asteroids.Count - 1;
+                    }
+                    if (_bullet[j].Collision(_asteroids[i]))
+                    {
+                        System.Media.SystemSounds.Hand.Play();
+                        _ship._exp += _asteroids[i].Power;
+                        _asteroids.RemoveAt(i);
+                        _bullet.RemoveAt(j);
+                        j--;
+                        Asteroid.DieAsteroid += delegate (string s)
+                        {
+                            Console.WriteLine(s);
+                        };
+                        continue;
+                    }
+                    if(_bullet[j].Pos.X > Game.Width)
+                    {
+                        _bullet.RemoveAt(j);
+                        j--;
+                    }
+                }
+                                
             }
+            foreach (Bullet a in _bullet)
+            {
+                a?.Update();
+            }
+
             for (var i = 0; i < _kit.Length; i++)
             {
                 if (_kit[i] == null) continue;
@@ -149,11 +173,17 @@ namespace Asteroids
                 };
                 System.Media.SystemSounds.Asterisk.Play(); 
             }
+            if(_asteroids.Count == 0)
+            {
+                NewLevel();
+            }
 
         }
         public static BaseObject[] _objs;
-        private static Bullet _bullet;
-        private static Asteroid[] _asteroids;
+        //private static Bullet _bullet;
+        private static List<Bullet> _bullet = new List<Bullet>();
+        //private static Asteroid[] _asteroids;
+        private static List<Asteroid> _asteroids = new List<Asteroid>();
         private static Kit[] _kit;
 
         public static void Load()
@@ -161,7 +191,6 @@ namespace Asteroids
             int n = 1; // количество туманностей
             int p = 2; // количество планет
             int s = 10; // количество звезд
-            int a = 10; //количество астероидов
             int h = 4; // количество аптечек
 
             var rnd = new Random();
@@ -183,22 +212,8 @@ namespace Asteroids
                 _objs[i] = new Star(new Point(600, (i - n + p) * 40), new Point(i, 0),
                     StarPicPath);
             }
-            _asteroids = new Asteroid[a];
-            for (int i = 0; i < a; i++)
-            {
-                int r = rnd.Next(5, 50);
-                _asteroids[i] = new Asteroid(new Point(rnd.Next(0, Game.Width), rnd.Next(0, Game.Height)), 
-                    new Point(-r / 20, r/5), AsterPicPath, new Size(50, 50));
-                Asteroid.CreateAsteroid += delegate (string d)
-                {
-                    Console.WriteLine(d);
-                };
-
-                Asteroid.CreateAsteroid += d =>
-                {
-                    using (var sw = new System.IO.StreamWriter("log.txt", true)) { sw.WriteLine(d); }
-                };
-            }
+            //_asteroids = new Asteroid[a];
+            NewLevel();
             _kit = new Kit[h];
             for (int i = 0; i < h; i++)
             {
@@ -206,12 +221,12 @@ namespace Asteroids
                 _kit[i] = new Kit(new Point(rnd.Next(0, Game.Width), rnd.Next(0, Game.Height)),
                     new Point(-r / 5, r), kitImPath, new Size(50, 50));
             }
-            _bullet = new Bullet(new Point(0, 200), new Point(5, 0), BulletPicPath, new Size(4, 1));
+            //_bullet = new Bullet(new Point(0, 200), new Point(5, 0), BulletPicPath, new Size(4, 1));
         }
         private static void Form_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.ControlKey) _bullet = new Bullet(new Point(_ship.Rect.X + _ship.Size.Width / 2, _ship.Rect.Y + _ship.Size.Height /2), 
-                new Point(50, 0), BulletPicPath, new Size(16, 4));
+            if (e.KeyCode == Keys.ControlKey) _bullet.Add(new Bullet(new Point(_ship.Rect.X + _ship.Size.Width / 2, _ship.Rect.Y + _ship.Size.Height /2), 
+                new Point(50, 0), BulletPicPath, new Size(16, 4)));
             if (e.KeyCode == Keys.Up) _ship.Up();
             if (e.KeyCode == Keys.Down) _ship.Down();
         }
@@ -221,6 +236,24 @@ namespace Asteroids
             Buffer.Graphics.DrawString("The End", new Font(FontFamily.GenericSansSerif, 
                 60, FontStyle.Underline), Brushes.White, 200, 100);
             Buffer.Render();
+        }
+        private static void NewLevel()
+        {
+            for (int i = 0; i < Level; i++)
+            {
+                int r = Rnd.Next(5, 50);
+                _asteroids.Add(new Asteroid(new Point(Rnd.Next(2*_ship.Rect.X, Game.Width), Rnd.Next(0, Game.Height)),
+                    new Point(-r / 50, r / 10), AsterPicPath, new Size(50, 50)));
+                Asteroid.CreateAsteroid += delegate (string d)
+                {
+                    Console.WriteLine(d);
+                };
+                Asteroid.CreateAsteroid += d =>
+                {
+                    using (var sw = new System.IO.StreamWriter("log.txt", true)) { sw.WriteLine(d); }
+                };
+            }
+            Level += 1;
         }
     }
 

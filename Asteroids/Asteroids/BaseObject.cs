@@ -5,7 +5,7 @@ namespace Asteroids
 {
     abstract class BaseObject : ICollision
     {
-        protected Point Pos;
+        public Point Pos;
         protected Point Dir;
         public Size Size;
         protected Image newImage;

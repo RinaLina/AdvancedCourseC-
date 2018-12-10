@@ -28,22 +28,22 @@ namespace Asteroids
         }
         public override void Update()
         {
-            if (Pos.Y < 0)
-            {
-                Pos.Y = Size.Height;
-            }
-            if (Pos.Y > Game.Height)
-            {
-                Pos.Y = Game.Height;
-            }
         }
         public void Up()
         {
             if (Pos.Y > 0) Pos.Y = Pos.Y - Dir.Y;
+            if (Pos.Y < 0)
+            {
+                Pos.Y = Size.Height;
+            }
         }
         public void Down()
         {
             if (Pos.Y < Game.Height) Pos.Y = Pos.Y + Dir.Y;
+            if (Pos.Y > Game.Height - Size.Height)
+            {
+                Pos.Y = Game.Height - Size.Height;
+            }
         }
         public void Die()
         {
