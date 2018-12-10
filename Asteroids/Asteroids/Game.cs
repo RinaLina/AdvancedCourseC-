@@ -243,7 +243,7 @@ namespace Asteroids
             {
                 int r = Rnd.Next(5, 50);
                 _asteroids.Add(new Asteroid(new Point(Rnd.Next(2*_ship.Rect.X, Game.Width), Rnd.Next(0, Game.Height)),
-                    new Point(-r / 50, r / 10), AsterPicPath, new Size(50, 50)));
+                    new Point(-r / 5, r), AsterPicPath, new Size(50, 50)));
                 Asteroid.CreateAsteroid += delegate (string d)
                 {
                     Console.WriteLine(d);
