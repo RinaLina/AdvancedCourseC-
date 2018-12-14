@@ -1,0 +1,25 @@
+﻿<Window x:Class="Company.EmplWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Company"
+        mc:Ignorable="d"
+        Title="Change" Height="300" Width="300">
+    <Grid>
+        <StackPanel Orientation="Vertical">
+            <TextBox x:Name="EmplData">Сотрудник</TextBox>
+            
+            <TextBox x:Name="txtName" MaxLength="250" Margin="10"  TextChanged="TextBox_TextChangedName">Введите имя</TextBox>
+            <TextBox x:Name="txtAge" MaxLength="3" Margin="10"   TextChanged="TextBox_TextChangedAge">Введите возраст</TextBox>
+            <TextBox x:Name="txtSal" MaxLength="250" Margin="10"   TextChanged="TextBox_TextChangedSalary" Text="Введите оклад"/>
+            <ComboBox x:Name="cbDep"/>
+
+            <Button x:Name="btnSave" Margin="10" Content="Сохранить" Click="btnSave_Click"/>
+
+
+            <TextBox x:Name="txtError"  Margin="10" Visibility="Hidden">Неверные данные</TextBox>
+
+        </StackPanel>
+    </Grid>
+</Window>
