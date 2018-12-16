@@ -27,6 +27,11 @@ namespace Company
             }
             set
             {
+
+                if (Comp.GetDepIndex(this.namedep) >= 0)
+                {
+                    return;
+                }
                 this.namedep = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.NameDepart)));
 
