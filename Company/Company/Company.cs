@@ -11,6 +11,7 @@ namespace Company
     {
         static public int WRONGVAL = -1;
         static public int NEWINDEX = -2;
+        static string DEFULT = "Отдел_деф";
         static ObservableCollection<Department> list = new ObservableCollection<Department>();
         /// <summary>
         /// Получение списка сотрудников отдела
@@ -26,9 +27,24 @@ namespace Company
         /// Добавление нового департамента
         /// </summary>
         /// <param name="newdep">департамент</param>
-        static public void Adddep(Department newdep)
+        static public void Adddep(string name)
         {
+            if(GetDepIndex(name) >= 0)
+            {
+                return;
+            }
+            Department newdep = new Department(name);
             list.Add(newdep);
+        }
+        static public void Addempl(string Name, int Age, int Salary, string NameDep)
+        {
+            Employee newempl = new Employee(Name, Age, Salary, NameDep);
+            list[GetDepIndex(NameDep)].AddEmpl(newempl);
+        }
+
+        static public void DelEmpl(int indD, int indE)
+        {
+            list[indD].ListWorker.RemoveAt(indE);
         }
         /// <summary>
         /// Удаление департамента
@@ -61,7 +77,11 @@ namespace Company
                 }
             }
         }
-
+        /// <summary>
+        /// Получение индекса отдела по названию
+        /// </summary>
+        /// <param name="Name"></param>
+        /// <returns></returns>
         static public int GetDepIndex(string Name)
         {
             for(int i = 0; i < list.Count; i++)
@@ -72,6 +92,18 @@ namespace Company
                 }
             }
             return WRONGVAL;
+        }
+        /// <summary>
+        /// Добавляет дефолтный отдел в компанию
+        /// </summary>
+        static public void AddDefult()
+        {
+            if (GetDepIndex(DEFULT) >= 0)
+            {
+                return;
+            }
+            Department dep = new Department();
+            list.Add(dep);
         }
     }
 }

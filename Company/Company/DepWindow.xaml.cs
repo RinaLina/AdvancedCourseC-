@@ -19,33 +19,28 @@ namespace Company
     /// </summary>
     public partial class DepWindow : Window
     {
-        public int IndexDep { get; set; }
-        public DepWindow(int indD)
+        public bool NewDep { get; set; }
+        public DepWindow()
         {
-            IndexDep = indD;
             InitializeComponent();
-            if (IndexDep == Comp.NEWINDEX)
-            {
-                btnDepDef.Visibility = System.Windows.Visibility.Visible;
-            }
-            else
-            {
-                txtName.Text = Comp.ListDep[IndexDep].NameDepart;
-            }
+            
         }
-
+        public DepWindow(MainWindow w) : this()
+        {
+            NewDep = true;
+            btnDepDef.Visibility = System.Windows.Visibility.Visible;
+        }
+        public DepWindow(Department dep) : this()
+        {
+            mainStackPanel.DataContext = dep;
+        }
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
-            if(IndexDep  == Comp.NEWINDEX)
+            if(NewDep)
             {
-                Department dep = new Department(txtName.Text);
-                Comp.Adddep(dep);
+                Comp.Adddep(txtName.Text);
             }
-            else
-            {
-                Comp.ListDep[IndexDep].NameDepart = txtName.Text;
-            }
-            SafeClose();
+            this.DialogResult = true;
         }
         /// <summary>
         /// Добавляет стандартный департамент в компанию, пока использую для тестов
@@ -54,19 +49,8 @@ namespace Company
         /// <param name="e"></param>
         private void btnDepDef_Click(object sender, RoutedEventArgs e)
         {
-            Department dep = new Department();
-            Comp.Adddep(dep);
-            SafeClose();
+            Comp.AddDefult();
+            this.DialogResult = true;
         }
-        /// <summary>
-        /// Закрывает форму изменение департамента и открывает основную
-        /// </summary>
-        private void SafeClose()
-        {
-            MainWindow mw = new MainWindow();
-            mw.Show();
-            this.Close();
-        }
-        
     }
 }

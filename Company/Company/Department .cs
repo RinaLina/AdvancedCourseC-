@@ -8,17 +8,30 @@ using System.ComponentModel;
 
 namespace Company
 {
-    class Department : INotifyPropertyChanged
+    public class Department : INotifyPropertyChanged
     {
+        public bool defult;
         /// <summary>
         /// Список сотрудников отдела
         /// </summary>
         ObservableCollection<Employee> list = new ObservableCollection<Employee>();
-
+        private string namedep;
         /// <summary>
         /// название департамента
         /// </summary>
-        public string NameDepart { get; set; }
+        public string NameDepart
+        {
+            get
+            {
+                return this.namedep;
+            }
+            set
+            {
+                this.namedep = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.NameDepart)));
+
+            }
+        }
         /// <summary>
         /// Получение списка сотрудников отдела
         /// </summary>
@@ -52,14 +65,14 @@ namespace Company
         /// </summary>
         public Department()
         {
-            NameDepart = "Отдел_деф";
-            this.list = new ObservableCollection<Employee>{
+                NameDepart = "Отдел_деф";
+                this.list = new ObservableCollection<Employee>{
                 new Employee("имя_1", 11, 11154,"Отдел_деф"),
                 new Employee("имя_2", 22, 33344,"Отдел_деф"),
                 new Employee("имя_3", 55, 222566,"Отдел_деф"),
                 new Employee("имя_4", 44, 52,"Отдел_деф"),
                 new Employee("имя_5", 11, 33,"Отдел_деф")
-            };
+                };         
         }
         /// <summary>
         /// Добавление сотрудника в отдел
@@ -75,13 +88,5 @@ namespace Company
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        private void NotifyPropertyChanged(string property)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(property));
-                PropertyChanged(this, new PropertyChangedEventArgs("DisplayMember"));
-            }
-        }
     }
 }

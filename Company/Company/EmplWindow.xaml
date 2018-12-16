@@ -7,13 +7,13 @@
         mc:Ignorable="d"
         Title="Change" Height="300" Width="300">
     <Grid>
-        <StackPanel Orientation="Vertical">
+        <StackPanel x:Name="mainStackPanel" Orientation="Vertical">
             <TextBox x:Name="EmplData">Сотрудник</TextBox>
-            
-            <TextBox x:Name="txtName" MaxLength="250" Margin="10"  TextChanged="TextBox_TextChangedName">Введите имя</TextBox>
-            <TextBox x:Name="txtAge" MaxLength="3" Margin="10"   TextChanged="TextBox_TextChangedAge">Введите возраст</TextBox>
-            <TextBox x:Name="txtSal" MaxLength="250" Margin="10"   TextChanged="TextBox_TextChangedSalary" Text="Введите оклад"/>
-            <ComboBox x:Name="cbDep"/>
+
+            <TextBox x:Name="txtName" MaxLength="250" Margin="10" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBox x:Name="txtAge" MaxLength="3" Margin="10"   Text="{Binding Age, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBox x:Name="txtSal" MaxLength="250" Margin="10"  Text="{Binding Salary, UpdateSourceTrigger=PropertyChanged}"/>
+            <ComboBox x:Name="cbDep"  ItemsSource="{Binding Path=Comp.ListDep}" Text="{Binding NameDep}"/>
 
             <Button x:Name="btnSave" Margin="10" Content="Сохранить" Click="btnSave_Click"/>
 

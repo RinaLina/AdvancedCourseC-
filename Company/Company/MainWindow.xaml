@@ -14,31 +14,53 @@
         </Grid.ColumnDefinitions>
 
         <Grid Grid.Column="0">
-            <ListBox x:Name="listDep" SelectionChanged="listDep_SelectionChanged">
-                
-            </ListBox>
+            <ListView x:Name="listDep" MouseDoubleClick="listDep_MouseDoubleClick" MouseUp="listDep_MouseUp">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Имя" 
+                                    Width="120" 
+                                    DisplayMemberBinding="{Binding NameDepart}"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
         </Grid>
-        
-        
+
+
         <Grid Grid.Column="1">
-            <ListBox x:Name="listEmp">
-                
-            </ListBox>
+            <ListView x:Name="listEmp" MouseDoubleClick="listEmp_MouseDoubleClick">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Имя" 
+                                    Width="50" 
+                                    DisplayMemberBinding="{Binding Name}"/>
+
+                        <GridViewColumn Header="Возраст" Width="50"
+                                    DisplayMemberBinding="{Binding Age}"  />
+
+                        <GridViewColumn Header="Зарплата" Width="50" 
+                                    DisplayMemberBinding="{Binding Salary}" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
         </Grid>
-        
-        
+
+
         <Grid Grid.Column="2">
             <StackPanel Orientation="Vertical">
                 <TextBlock>Сотрудник:</TextBlock>
                 <Button x:Name="btnEmplAdd" Margin="10" Content="Добвить" Click="btnEmplAdd_Click"/>
-                <Button x:Name="btnEmplChange" Margin="10" Content="Измненить" Click="btnEmplChange_Click"/>
                 <Button x:Name="btnEmplDel" Margin="10" Content="Удалить" Click="btnEmplDel_Click"/>
-                
+
                 <TextBlock>Департамент:</TextBlock>
                 <Button x:Name="btnDepAdd" Margin="10" Content="Добвить" Click="btnDepAdd_Click"/>
-                <Button x:Name="btnDepChange" Margin="10" Content="Измненить" Click="btnDepChange_Click"/>
                 <Button x:Name="btnDepDel" Margin="10" Content="Удалить" Click="btnDepDel_Click"/>
-                <TextBlock Text="Для изменения и удаления выберите элемент из списка"/>
+                <TextBlock TextWrapping="Wrap">
+                    Для изменения дважды нажмите на выбранный объект.
+                    <LineBreak />
+                    Для удаления выберите элемент из списка.
+                    <LineBreak />
+                    Нельзя создавать отделы с отдинаковыми названиями
+                </TextBlock>
             </StackPanel>
         </Grid>
     </Grid>

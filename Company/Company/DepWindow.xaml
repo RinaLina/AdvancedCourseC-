@@ -7,10 +7,10 @@
         mc:Ignorable="d"
         Title="DepWindow" Height="300" Width="300">
     <Grid>
-       <StackPanel Orientation="Vertical">
+        <StackPanel x:Name="mainStackPanel" Orientation="Vertical">
             <TextBox x:Name="EmplData">Департамент</TextBox>
-
-            <TextBox x:Name="txtName" MaxLength="250" Margin="10">Введите название</TextBox>
+            <TextBox  Margin="5">Введите название</TextBox>
+            <TextBox x:Name="txtName" Text="{Binding NameDepart, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
 
             <Button x:Name="btnSave" Margin="10" Content="Сохранить" Click="btnSave_Click"/>
             <Button x:Name="btnDepDef" Visibility="Hidden" Margin="10" Content="Добавить дефолтный" Click="btnDepDef_Click"/>
